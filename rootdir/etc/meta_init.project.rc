@@ -1,0 +1,24 @@
+#INTERNAL_START
+on post-fs
+
+    chmod 0660 /dev/spm
+    chown system system /dev/spm
+
+on boot
+
+service spm_script /vendor/bin/spm_loader
+    user system
+    group system
+    oneshot
+
+
+#26M Clock calibration
+service dcxosetcap /vendor/bin/dcxosetcap
+    class main
+    oneshot
+    disabled
+
+on property:vendor.service.nvram_init=Ready
+    start dcxosetcap
+
+#INTERNAL_END
